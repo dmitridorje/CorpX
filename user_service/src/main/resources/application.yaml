@@ -1,0 +1,83 @@
+app:
+  max-active-user-goals: 3
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
+services:
+  s3:
+    endpoint: http://127.0.0.1:9000
+    accessKey: user
+    secretKey: password
+    bucketName: corpbucket
+    max-image-size-mb: 5
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
+
+project-service:
+  host: localhost
+  port: 8082
+
+payment-service:
+  host: localhost
+  port: 9080
+
+redis:
+  channels:
+    mentorship: mentorship_channel
+    project-follower: project_follower_channel
+    mentorship-accepted: mentorship_accepted_channel
+    search-appearance-channel: search_appearance_channel
+    profile-view-channel: profile_view_channel
+    user-ban: user_ban_channel
+    user-follower: user_follower_channel
+    mentorship-offered: mentorship_offered_channel
+    goal-completed: goal_completed_channel
+    skill-acquired: skill_acquired_channel
+    recommendation-received: recommendation_received_channel
+    profile-view: profile_view_channel
+    skill-offered: skill_offered_channel
+    recommendation-requested: recommendation_requested_channel
+    premium-bought: premium_bought_channel
+
+scheduler:
+  clear-events:
+    cron: "0 0 0 * * SUN"
+    batchSize: 10
+
+executorConfig:
+  thread-pool-size: 10
+
+premium:
+  removal:
+    batch-size: 100
+    thread-pool:
+      core-pool-size: 8
+      max-pool-capacity: 16
+      queue-capacity: 32
+    interval: "@weekly"
