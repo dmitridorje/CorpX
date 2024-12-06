@@ -1,0 +1,81 @@
+spring:
+  data:
+    jdbc:
+      repositories:
+        enabled: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+server:
+  port: 8090
+
+logging:
+  level:
+    root: info
+
+free-account-numbers:
+  accounts:
+    INDIVIDUAL:
+      targetAmount: 15
+    CORPORATE:
+      targetAmount: 30
+    SAVINGS:
+      targetAmount: 25
+    INVESTMENT:
+      targetAmount: 40
+    RETIREMENT:
+      targetAmount: 25
+    STUDENT:
+      targetAmount: 10
+    BUSINESS:
+      targetAmount: 15
+    PREPAID:
+      targetAmount: 25
+
+scheduler:
+  account-numbers-generation: "0 30 5 * * *"
+
+user-service:
+  host: localhost
+  port: 8080
+achievement-service:
+  host: localhost
+  port: 8085
+
+rate-change-rules:
+  events:
+    WRITER:
+      targetRateChange: 0.25
+      partialText: 'for getting WRITER achievement'
+    EXPERT:
+      targetRateChange: 0.35
+      partialText: 'for getting EXPERT achievement'
+    expletives:
+      targetRateChange: -0.05
+      partialText: 'for using expletives in posts'
+    ban:
+      targetRateChange: -0.1
+      partialText: 'for being banned'
+  max-rate: 10.0
+
+redis:
+  channels:
+    achievement: achievement_channel
+    rate-change: rate_change_channel
+    user-ban: user_ban_channel
+    rate-decrease: rate_decrease_channel

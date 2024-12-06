@@ -1,0 +1,28 @@
+free-account-numbers:
+  accounts:
+    INDIVIDUAL:
+      targetAmount: 4
+    CORPORATE:
+      targetAmount: 3
+    SAVINGS:
+      targetAmount: 2
+    INVESTMENT:
+      targetAmount: 0
+    RETIREMENT:
+      targetAmount: 0
+    STUDENT:
+      targetAmount: 0
+    BUSINESS:
+      targetAmount: 0
+    PREPAID:
+      targetAmount: 0
+
+rate-change-rules:
+  events:
+    WRITER:
+      targetRateChange: 42
+      partialText: 'for getting WRITER achievement'
+
+spring:
+  liquibase:
+    enabled: false

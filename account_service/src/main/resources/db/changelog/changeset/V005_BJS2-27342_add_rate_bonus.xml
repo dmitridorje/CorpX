@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20241030-1" author="dmitridorje">
+        <addColumn tableName="savings_account">
+            <column name="last_bonus_update" type="timestamp" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20241030-2" author="dmitridorje">
+        <addColumn tableName="savings_account_rate">
+            <column name="rate_bonus_added" type="double precision" defaultValue="0.0"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

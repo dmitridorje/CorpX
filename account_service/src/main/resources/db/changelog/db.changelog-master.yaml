@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/V001__account-service_account.sql
+  - include:
+      file: db/changelog/changeset/V002__account-service_remove-functions-triggers.sql
+  - include:
+      file: db/changelog/changeset/V003_BJS2-27339_tables_for_unique_numbers_created.sql
+  - include:
+      file: db/changelog/changeset/V004_BJS2-27337_saving-account-create.sql
+  - include:
+      file: db/changelog/changeset/V004_BJS2-27335__account-service_create_balance.sql
+  - include:
+      file: db/changelog/changeset/V004_BJS2-27337_saving-account-create.sql
+  - include:
+      file: db/changelog/changeset/V005_BJS2-27342_add_rate_bonus.xml
+
+  - include:
+      file: db/changelog/changeset/V005_BJS2-27340_balance_audit.sql
+  - include:
+      file: db/changelog/changeset/V006__modify_balance_audit_table.sql
