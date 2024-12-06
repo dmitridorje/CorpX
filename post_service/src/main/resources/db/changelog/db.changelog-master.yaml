@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/post_V001__initial.sql
+  - include:
+      file: db/changelog/changeset/post_V002__ad.sql
+  - include:
+      file: db/changelog/changeset/post_V003_resource.sql
+  - include:
+      file: db/changelog/changeset/post_V004_create_hashtag.sql
+  - include:
+      file: db/changelog/changeset/post_V_005_BJS2-27264_add_spellcheck_completed_to_post.sql
+  - include:
+      file: db/changelog/changeset/post_V_006_BJS2-27273_add_verified_fields_to_post.sql
+  - include:
+      file: db/changelog/changeset/post_V_007_BJS2-43470__add_like_num_views_num_and_version_to_post.sql

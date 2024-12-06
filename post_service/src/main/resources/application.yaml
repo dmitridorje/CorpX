@@ -1,0 +1,157 @@
+server:
+  port: 8081
+user-service:
+  host: localhost
+  port: 8080
+project-service:
+  host: localhost
+  port: 8082
+payment-service:
+  host: localhost
+  port: 9080
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+  kafka:
+    consumer:
+      group-id: 1
+      auto-offset-reset: latest
+    bootstrap-servers: localhost:9092
+    listener:
+      ack-mode: manual
+    topics:
+      comment: comment_topic
+      posts: post_topic
+      post-view: post_view_topic
+      cache-heat: cache_heat_topic
+      like: like_topic
+      comment-partitions-num: 5
+    followers-batch-size: 2
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      channels:
+        hashtag: hashtags_channel
+        like_post: like_post_channel
+        post_view: post_view_channel
+        ad_bought: ad_bought_channel
+        user_ban: user_ban_channel
+        comment_channel: comment_channel
+        post-comment: post_comment_channel
+
+  services:
+    s3:
+      endpoint: http://127.0.0.1:9000
+      accessKey: user
+      secretKey: password
+      bucketName: post-service-bucket
+      region: US_EAST_1
+
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 10MB
+
+post:
+  moderation:
+    scheduler:
+      cron: "@daily"
+    batch-size: 100
+    file-path: src/main/resources/swear_words.txt
+  publisher:
+    batch-size: 1000
+    scheduler:
+      cron: "0 0/1 * 1/1 * ?" # every minute
+
+  ad-remover:
+    scheduler:
+      cron: "0 0/1 * 1/1 * ?" # every minute
+  max-images-per-post: 10
+  executor:
+    core-pool-size: 8
+    max-pool-size: 16
+    queue-capacity: 32
+
+resources:
+  file:
+    max-file-size: 5242880
+  image:
+    max-width-horizontal: 1080
+    max-height-horizontal: 566
+    max-size-square: 1080
+    supported-image-types: "image/png,image/jpeg,image/jpg"
+  cleanup:
+    scheduler:
+      cron: "0 0 2 * * ?" # каждый день в 2 часа ночи
+    retention-period: 1M # настройка периода: M - месяц, D - день
+
+spell-checker:
+  api:
+    host: https://api.textgears.com
+    key: whatever
+    autocorrect: /correct
+    language-detection: /detect
+  scheduler:
+    cron: "0 0 3 * * *" # каждый день в 3 часа ночи
+  batch-size: 100
+
+scheduler:
+  cron:
+    ban-users: "0 0 0 * * ?" # every day at midnight
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+cache:
+  author-ttl: 86400
+  post-ttl: 86400
+  post:
+    prefix: "posts:"
+    fields:
+      views: numberOfViews
+      number-of-likes: numberOfLikes
+  author:
+    prefix: "author:"
+  heat:
+    producer-batch-size: 1000
+    process-batch-size: 100
+    max-posts: 500
+    max-days-back: 60
+
+post-comments:
+  size: 3
+feed-posts:
+  size: 500
+feed-posts-per-request:
+  size: 20
+
+thread:
+  queue:
+    size: 100
+  pool:
+    feed:
+      size: 5
+      max-size: 10
