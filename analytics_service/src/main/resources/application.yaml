@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      channel:
+        profile-view: profile_view_channel
+        search-appearance: search_appearance_channel
+        recommendation: recommendation_channel
+        like: like_channel
+        ad-bought: ad_bought_channel
+        fund-raised: fund_raised_channel
+        premium-bought: premium_bought_channel
+        project-view: project_view_channel
+        post_view_channel: post_view_channel
+        user-follower: user_follower_channel
+        project-follower: project_follower_channel
+
+server:
+  port: 8086
+
+logging:
+  level:
+    root: info
+
+project-service:
+  host: localhost
+  port: 8082
+
+redis:
+  port: 6379
+  host: localhost
+  channel:
+    profile-view: profile_view_channel
+    search-appearance: search_appearance_channel
+    recommendation: recommendation_channel
+    like: like_post
+    ad-bought: ad_bought
+    goal-completed: goal_completed_channel
