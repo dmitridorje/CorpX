@@ -48,7 +48,7 @@
 - **Билдеры сообщений**:
   - `SubscriptionBuilder`, `SkillBuilder`, `RecommendBuilder`.
 - **Сервисы отправки сообщений**:
-  - `MailSender`, `RedisTemplate`.
+  - `MailSender` и т.д.
 
 ### Архитектура
 1. Микросервисы (`UserService`, `PostService`, `ProjectService`) публикуют события через брокер сообщений.
