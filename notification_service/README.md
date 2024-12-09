@@ -1,109 +1,73 @@
-# Service Template
+# Notification Service
 
-Стандартный шаблон проекта на SpringBoot
+## Описание
 
-# Использованные технологии
+Сервис уведомлений централизует обработку и отправку нотификаций для различных микросервисов.  
+Обеспечивает гибкую и масштабируемую архитектуру для управления уведомлениями через брокер сообщений и различные каналы доставки, такие как email, Telegram и другие.
 
-* [Spring Boot](https://spring.io/projects/spring-boot) – как основной фрэймворк
-* [PostgreSQL](https://www.postgresql.org/) – как основная реляционная база данных
-* [Redis](https://redis.io/) – как кэш и очередь сообщений через pub/sub
-* [testcontainers](https://testcontainers.com/) – для изолированного тестирования с базой данных
-* [Liquibase](https://www.liquibase.org/) – для ведения миграций схемы БД
-* [Gradle](https://gradle.org/) – как система сборки приложения
-* [Lombok](https://projectlombok.org/) – для удобной работы с POJO классами
-* [MapStruct](https://mapstruct.org/) – для удобного маппинга между POJO классами
+## Основные возможности
 
-# База данных
+- Централизованная логика отправки уведомлений.
+- Поддержка различных каналов доставки (email, Telegram и другие).
+- Простая интеграция новых сервисов и каналов.
+- Уведомления по событиям из `UserService`, `PostService`, `ProjectService` и других.
+- Масштабируемость через брокер сообщений.
 
-* База поднимается в отдельном сервисе [infra](../infra)
-* Redis поднимается в единственном инстансе тоже в [infra](../infra)
-* Liquibase сам накатывает нужные миграции на голый PostgreSql при старте приложения
-* В тестах используется [testcontainers](https://testcontainers.com/), в котором тоже запускается отдельный инстанс
-  postgres
-* В коде продемонстрирована работа как с JdbcTemplate, так и с JPA (Hibernate)
+## Преимущества архитектуры
 
-# Как начать разработку начиная с шаблона?
+1. **Снижение дублирования логики**: 
+   - Отправка уведомлений реализуется в одном месте.
+   - Новый канал доставки добавляется только в сервис уведомлений.
 
-1. Сначала нужно склонировать этот репозиторий
+2. **Гибкость и расширяемость**:
+   - Легкое добавление новых типов уведомлений.
+   - Простое подключение новых микросервисов.
 
-```shell
-git clone https://github.com/FAANG-School/ServiceTemplate
-```
+3. **Модульность**:
+   - Разделение ответственности между сервисами.
+   - Меньше зависимостей внутри каждого микросервиса.
 
-2. Далее удаляем служебную директорию для git
+4. **Использование брокера сообщений**:
+   - Сервисы отправляют события, а `NotificationService` обрабатывает их.
+   - Возможность подключения новых потребителей событий (например, для аналитики).
 
-```shell
-# Переходим в корневую директорию проекта
-cd ServiceTemplate
-rm -rf .git
-```
+## Технические детали
 
-3. Далее нужно создать совершенно пустой репозиторий в github/gitlab
+### Используемые технологии
+- **Spring Boot**: основа микросервиса.
+- **Redis**: брокер сообщений.
+- **spring-boot-starter-mail**: библиотека для отправки email.
+- **Telegram Bot API**: интеграция с Telegram.
+- Возможность добавления новых каналов (например, Apple Push).
 
-4. Создаём новый репозиторий локально и коммитим изменения
+### Основные компоненты
+- **Публикация событий**:
+  - `SubscriptionPublisher`, `SkillPublisher`, `RecommendPublisher`, `MentorshipPublisher`.
+- **Обработчики событий**:
+  - `SubscriptionListener`, `SkillListener`, `RecommendListener`, `MentorshipListener`.
+- **Билдеры сообщений**:
+  - `SubscriptionBuilder`, `SkillBuilder`, `RecommendBuilder`.
+- **Сервисы отправки сообщений**:
+  - `MailSender` и т.д.
 
-```shell
-git init
-git remote add origin <link_to_repo>
-git add .
-git commit -m "<msg>"
-```
+### Архитектура
+1. Микросервисы (`UserService`, `PostService`, `ProjectService`) публикуют события через брокер сообщений.
+2. `NotificationService` принимает события, обрабатывает их и отправляет уведомления через выбранный канал.
+3. Логика отправки централизована в `NotificationService`.
 
-Готово, можно начинать работу!
+## Пример работы
 
-# Как запустить локально?
+### Сценарий
+1. Пользователь лайкает пост.
+2. `PostService` отправляет событие в брокер сообщений.
+3. `NotificationService` получает событие, обрабатывает его и отправляет уведомление пользователю.
 
-Сначала нужно развернуть базу данных из директории [infra](../infra)
+### Формат события
+```json
+{
+  "eventType": "LIKE",
+  "userId": 123,
+  "postId": 456,
+  "timestamp": "2024-12-07T12:34:56Z"
+}
 
-Далее собрать gradle проект
-
-```shell
-# Нужно запустить из корневой директории, где лежит build.gradle.kts
-gradle build
-```
-
-Запустить jar'ник
-
-```shell
-java -jar build/libs/ServiceTemplate-1.0.jar
-```
-
-Но легче всё это делать через IDE
-
-# Код
-
-RESTful приложения калькулятор с единственным endpoint'ом, который принимает 2 числа и выдает результаты их сложения,
-вычитаяни, умножения и деления
-
-* Обычная трёхслойная
-  архитектура – [Controller](src/main/java/faang/school/notificationservice/controller), [Service](src/main/java/faang/school/notificationservice/service), [Repository](src/main/java/faang/school/notificationservice/repository)
-* Слой Repository реализован и на jdbcTemplate, и на JPA (Hibernate)
-* Написан [GlobalExceptionHandler](src/main/java/faang/school/notificationservice/controller/GlobalExceptionHandler.java)
-  который умеет возвращать ошибки в формате `{"code":"CODE", "message": "message"}`
-* Используется TTL кэширование вычислений
-  в [CalculationTtlCacheService](src/main/java/faang/school/notificationservice/service/cache/CalculationTtlCacheService.java)
-* Реализован простой Messaging через [Redis pub/sub](https://redis.io/docs/manual/pubsub/)
-  * [Конфигурация](src/main/java/faang/school/notificationservice/config/RedisConfig.java) –
-    сетапится [RedisTemplate](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html) –
-    класс, для удобной работы с Redis силами Spring
-  * [Отправитель](src/main/java/faang/school/notificationservice/service/messaging/RedisCalculationPublisher.java) – генерит
-    рандомные запросы и отправляет в очередь
-  * [Получатель](src/main/java/faang/school/notificationservice/service/messaging/RedisCalculationSubscriber.java) –
-    получает запросы и отправляет задачи асинхронно выполняться
-    в [воркер](src/main/java/faang/school/notificationservice/service/worker/CalculationWorker.java)
-
-# Тесты
-
-Написаны только для единственного REST endpoint'а
-* SpringBootTest
-* MockMvc
-* Testcontainers
-* AssertJ
-* JUnit5
-* Parameterized tests
-
-# TODO
-
-* Dockerfile, который подключается к сети запущенной postgres в docker-compose
-* Redis connectivity
-* ...
